@@ -1,0 +1,12 @@
+Sublime Text plug-in for Protocol Buffer Auto Formatting.
+
+To Use
+-------
+
+- Correctly set PROTOPATH and GOBIN in the .sublime-settings file.
+
+In the package folder, edit the CodeFormatter.sublime-settings to contain the correct path information. Under GOBIN, enter the location of your Go Binary. Under PROTOPATH, enter any locations of Protocol Buffers that are imported by your protocol buffers.
+
+Please refer to README.md for more information on usage and requirements.
+
+Installation complete!

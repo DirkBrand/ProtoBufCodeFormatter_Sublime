@@ -1,0 +1,17 @@
+Protocol Buffer Code Formatter v1.0.0 Changelog:
+
+Features:
+-         Click save to correctly format your code.
+
+Limitations:
+- Variable indentation length
+
+- Formatter cannot preserve order of structures
+
+- For comments, outer `extend' groups are logically grouped together, so inner comments are lost
+
+- Style of comments are not preserved (/* */ vs. //), so single-line comments are shown with `//` and multi-line comments with `/* */`.
+
+- Any comments not directly adjacent to a line of code, are not preserved.  Comments must be directly above or below a line of code (without newlines).
+
+- If an error occurs, please review the Sublime console: ctrl + `
