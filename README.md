@@ -24,13 +24,13 @@ Installation
 
 Paths
 =====
-In the package folder, edit the CodeFormatter.sublime-settings to contain the correct path information.  Under GOBIN, enter the location of your Go Binary.  Under PROTOPATH, enter any locations of Protocol Buffers that are imported by your protocol buffers.
+In the package folder, edit the `CodeFormatter.sublime-settings` to contain the correct path information.  Under `GOBIN`, enter the location of your Go Binary.  Under `PROTOPATH`, enter any locations of Protocol Buffers that are imported by your protocol buffers.
 
 Requirements
 ============
 
 - [Golang][go] v1.0 or higher
-- Correctly set PROTOPATH and GOBIN in the .sublime-settings file.
+- Correctly set `PROTOPATH` and `GOBIN` in the `.sublime-settings file`.
 
  
 [go]: http://golang.org/
