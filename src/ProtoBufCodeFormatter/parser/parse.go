@@ -32,7 +32,7 @@ import (
 	"os/exec"
 	"strings"
 )
-import ".././descriptor"
+import "github.com/DirkBrand/ProtoBufCodeFormatter_Sublime/src/ProtoBufCodeFormatter/descriptor"
 import "code.google.com/p/gogoprotobuf/proto"
 
 type errCmd struct {
