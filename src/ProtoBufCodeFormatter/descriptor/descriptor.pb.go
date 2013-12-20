@@ -4,7 +4,7 @@
 
 package descriptor
 
-import proto "code.google.com/p/gogoprotobuf/proto"
+import proto "ProtoBufCodeFormatter/proto"
 import json "encoding/json"
 import math "math"
 

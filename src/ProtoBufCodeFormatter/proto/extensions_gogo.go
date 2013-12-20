@@ -1,5 +1,3 @@
-// Extensions for Protocol Buffers to create more go like structures.
-//
 // Copyright (c) 2013, Vastech SA (PTY) LTD. All rights reserved.
 // http://code.google.com/p/gogoprotobuf/gogoproto
 //
@@ -26,46 +24,71 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package parser
+package proto
 
 import (
-	"os/exec"
-	"strings"
+	"bytes"
+	"fmt"
+	"reflect"
+	"sort"
 )
-import "ProtoBufCodeFormatter/descriptor"
-import "ProtoBufCodeFormatter/proto"
 
-type errCmd struct {
-	output []byte
-	err    error
-}
-
-func (this *errCmd) Error() string {
-	return this.err.Error() + ":" + string(this.output)
-}
-
-func ParseFile(filename string, paths []string) (*descriptor.FileDescriptorSet, error) {
-	return parseFile(filename, true, true, paths)
-}
-
-func parseFile(filename string, includeSourceInfo bool, includeImports bool, paths []string) (*descriptor.FileDescriptorSet, error) {
-	args := []string{"--proto_path=" + strings.Join(paths, ":")}
-	if includeSourceInfo {
-		args = append(args, "--include_source_info")
+func GetBoolExtension(pb extendableProto, extension *ExtensionDesc, ifnotset bool) bool {
+	if reflect.ValueOf(pb).IsNil() {
+		return ifnotset
 	}
-	if includeImports {
-		args = append(args, "--include_imports")
-	}
-	args = append(args, "--descriptor_set_out=/dev/stdout")
-	args = append(args, filename)
-	cmd := exec.Command("protoc", args...)
-	data, err := cmd.CombinedOutput()
+	value, err := GetExtension(pb, extension)
 	if err != nil {
-		return nil, &errCmd{data, err}
+		return ifnotset
 	}
-	fileDesc := &descriptor.FileDescriptorSet{}
-	if err := proto.Unmarshal(data, fileDesc); err != nil {
+	if value == nil {
+		return ifnotset
+	}
+	if value.(*bool) == nil {
+		return ifnotset
+	}
+	return *(value.(*bool))
+}
+
+func (this *Extension) Equal(that *Extension) bool {
+	return bytes.Equal(this.enc, that.enc)
+}
+
+func SizeOfExtensionMap(m map[int32]Extension) (n int) {
+	return sizeExtensionMap(m)
+}
+
+func EncodeExtensionMap(m map[int32]Extension, data []byte) (n int, err error) {
+	if err := encodeExtensionMap(m); err != nil {
+		return 0, err
+	}
+	keys := make([]int, 0, len(m))
+	for k := range m {
+		keys = append(keys, int(k))
+	}
+	sort.Ints(keys)
+	for _, k := range keys {
+		n += copy(data[n:], m[int32(k)].enc)
+	}
+	return n, nil
+}
+
+func GetRawExtension(m map[int32]Extension, id int32) ([]byte, error) {
+	if m[id].value == nil || m[id].desc == nil {
+		return m[id].enc, nil
+	}
+	if err := encodeExtensionMap(m); err != nil {
 		return nil, err
 	}
-	return fileDesc, nil
+	return m[id].enc, nil
+}
+
+func NewExtension(e []byte) Extension {
+	ee := Extension{enc: make([]byte, len(e))}
+	copy(ee.enc, e)
+	return ee
+}
+
+func (this Extension) GoString() string {
+	return fmt.Sprintf("proto.NewExtension(%#v)", this.enc)
 }

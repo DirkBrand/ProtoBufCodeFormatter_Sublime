@@ -26,8 +26,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package descriptor
 
 import (
+	proto "ProtoBufCodeFormatter/proto"
 	"bytes"
-	proto "code.google.com/p/gogoprotobuf/proto"
 	"encoding/binary"
 	fmt "fmt"
 	sort "sort"

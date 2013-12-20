@@ -30,7 +30,7 @@ package descriptor
 
 import fmt "fmt"
 import strings "strings"
-import code_google_com_p_gogoprotobuf_proto "code.google.com/p/gogoprotobuf/proto"
+import code_google_com_p_gogoprotobuf_proto "ProtoBufCodeFormatter/proto"
 import sort "sort"
 import strconv "strconv"
 import reflect "reflect"

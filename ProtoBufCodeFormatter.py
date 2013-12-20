@@ -66,6 +66,8 @@ class AutoformatOnSave(sublime_plugin.EventListener):
             gocmd = os.path.join(self.gobin, 'go')
 
             subprocess.call([gocmd, 'build', '-o', processPath],
+                            env={
+                            'GOPATH': str(os.path.join(plugPath, "goFindCallers"))}
                             cwd=buildpath,
                             startupinfo=self.startupinfo)
 

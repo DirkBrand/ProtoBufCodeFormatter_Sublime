@@ -1,8 +1,8 @@
 package main
 
 import (
+	parser "ProtoBufCodeFormatter/parser"
 	"fmt"
-	parser "github.com/DirkBrand/ProtoBufCodeFormatter_Sublime/src/ProtoBufCodeFormatter/parser"
 	"os"
 	"path"
 	"path/filepath"

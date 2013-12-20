@@ -1,7 +1,7 @@
-// Extensions for Protocol Buffers to create more go like structures.
+// Go support for Protocol Buffers - Google's data interchange format
 //
-// Copyright (c) 2013, Vastech SA (PTY) LTD. All rights reserved.
-// http://code.google.com/p/gogoprotobuf/gogoproto
+// Copyright 2012 The Go Authors.  All rights reserved.
+// http://code.google.com/p/goprotobuf/
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -13,6 +13,9 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
+//     * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,46 +29,35 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package parser
+package proto
 
 import (
-	"os/exec"
-	"strings"
+	"testing"
 )
-import "ProtoBufCodeFormatter/descriptor"
-import "ProtoBufCodeFormatter/proto"
 
-type errCmd struct {
-	output []byte
-	err    error
-}
+// This is a separate file and package from size_test.go because that one uses
+// generated messages and thus may not be in package proto without having a circular
+// dependency, whereas this file tests unexported details of size.go.
 
-func (this *errCmd) Error() string {
-	return this.err.Error() + ":" + string(this.output)
-}
-
-func ParseFile(filename string, paths []string) (*descriptor.FileDescriptorSet, error) {
-	return parseFile(filename, true, true, paths)
-}
-
-func parseFile(filename string, includeSourceInfo bool, includeImports bool, paths []string) (*descriptor.FileDescriptorSet, error) {
-	args := []string{"--proto_path=" + strings.Join(paths, ":")}
-	if includeSourceInfo {
-		args = append(args, "--include_source_info")
+func TestVarintSize(t *testing.T) {
+	// Check the edge cases carefully.
+	testCases := []struct {
+		n    uint64
+		size int
+	}{
+		{0, 1},
+		{1, 1},
+		{127, 1},
+		{128, 2},
+		{16383, 2},
+		{16384, 3},
+		{1<<63 - 1, 9},
+		{1 << 63, 10},
 	}
-	if includeImports {
-		args = append(args, "--include_imports")
+	for _, tc := range testCases {
+		size := sizeVarint(tc.n)
+		if size != tc.size {
+			t.Errorf("sizeVarint(%d) = %d, want %d", tc.n, size, tc.size)
+		}
 	}
-	args = append(args, "--descriptor_set_out=/dev/stdout")
-	args = append(args, filename)
-	cmd := exec.Command("protoc", args...)
-	data, err := cmd.CombinedOutput()
-	if err != nil {
-		return nil, &errCmd{data, err}
-	}
-	fileDesc := &descriptor.FileDescriptorSet{}
-	if err := proto.Unmarshal(data, fileDesc); err != nil {
-		return nil, err
-	}
-	return fileDesc, nil
 }

@@ -1,5 +1,3 @@
-// Extensions for Protocol Buffers to create more go like structures.
-//
 // Copyright (c) 2013, Vastech SA (PTY) LTD. All rights reserved.
 // http://code.google.com/p/gogoprotobuf/gogoproto
 //
@@ -26,46 +24,17 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package parser
+package proto
 
 import (
-	"os/exec"
-	"strings"
+	"encoding/json"
+	"strconv"
 )
-import "ProtoBufCodeFormatter/descriptor"
-import "ProtoBufCodeFormatter/proto"
 
-type errCmd struct {
-	output []byte
-	err    error
-}
-
-func (this *errCmd) Error() string {
-	return this.err.Error() + ":" + string(this.output)
-}
-
-func ParseFile(filename string, paths []string) (*descriptor.FileDescriptorSet, error) {
-	return parseFile(filename, true, true, paths)
-}
-
-func parseFile(filename string, includeSourceInfo bool, includeImports bool, paths []string) (*descriptor.FileDescriptorSet, error) {
-	args := []string{"--proto_path=" + strings.Join(paths, ":")}
-	if includeSourceInfo {
-		args = append(args, "--include_source_info")
+func MarshalJSONEnum(m map[int32]string, value int32) ([]byte, error) {
+	s, ok := m[value]
+	if !ok {
+		s = strconv.Itoa(int(value))
 	}
-	if includeImports {
-		args = append(args, "--include_imports")
-	}
-	args = append(args, "--descriptor_set_out=/dev/stdout")
-	args = append(args, filename)
-	cmd := exec.Command("protoc", args...)
-	data, err := cmd.CombinedOutput()
-	if err != nil {
-		return nil, &errCmd{data, err}
-	}
-	fileDesc := &descriptor.FileDescriptorSet{}
-	if err := proto.Unmarshal(data, fileDesc); err != nil {
-		return nil, err
-	}
-	return fileDesc, nil
+	return json.Marshal(s)
 }

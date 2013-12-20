@@ -1,5 +1,3 @@
-// Extensions for Protocol Buffers to create more go like structures.
-//
 // Copyright (c) 2013, Vastech SA (PTY) LTD. All rights reserved.
 // http://code.google.com/p/gogoprotobuf/gogoproto
 //
@@ -26,46 +24,32 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package parser
+package proto
 
 import (
-	"os/exec"
-	"strings"
+	"fmt"
+	"reflect"
 )
-import "ProtoBufCodeFormatter/descriptor"
-import "ProtoBufCodeFormatter/proto"
 
-type errCmd struct {
-	output []byte
-	err    error
-}
-
-func (this *errCmd) Error() string {
-	return this.err.Error() + ":" + string(this.output)
-}
-
-func ParseFile(filename string, paths []string) (*descriptor.FileDescriptorSet, error) {
-	return parseFile(filename, true, true, paths)
-}
-
-func parseFile(filename string, includeSourceInfo bool, includeImports bool, paths []string) (*descriptor.FileDescriptorSet, error) {
-	args := []string{"--proto_path=" + strings.Join(paths, ":")}
-	if includeSourceInfo {
-		args = append(args, "--include_source_info")
+func writeEnum(w *textWriter, v reflect.Value, props *Properties) error {
+	m, ok := enumStringMaps[props.Enum]
+	if !ok {
+		if err := writeAny(w, v, props); err != nil {
+			return err
+		}
 	}
-	if includeImports {
-		args = append(args, "--include_imports")
+	key := int32(0)
+	if v.Kind() == reflect.Ptr {
+		key = int32(v.Elem().Int())
+	} else {
+		key = int32(v.Int())
 	}
-	args = append(args, "--descriptor_set_out=/dev/stdout")
-	args = append(args, filename)
-	cmd := exec.Command("protoc", args...)
-	data, err := cmd.CombinedOutput()
-	if err != nil {
-		return nil, &errCmd{data, err}
+	s, ok := m[key]
+	if !ok {
+		if err := writeAny(w, v, props); err != nil {
+			return err
+		}
 	}
-	fileDesc := &descriptor.FileDescriptorSet{}
-	if err := proto.Unmarshal(data, fileDesc); err != nil {
-		return nil, err
-	}
-	return fileDesc, nil
+	_, err := fmt.Fprint(w, s)
+	return err
 }
