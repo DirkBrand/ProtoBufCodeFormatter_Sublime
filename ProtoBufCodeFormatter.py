@@ -4,6 +4,7 @@ import subprocess
 import os
 import re
 from sys import platform as _platform
+import sys
 import functools
 
 PLUGIN_NAME = "ProtoBufCodeFormatter"
@@ -89,6 +90,10 @@ class AutoformatOnSave(sublime_plugin.EventListener):
         log_file.write(issues)
         log_file.write("\n")
         log_file.close()
+
+        # Create popup
+        if len(issues) > 1:
+            sublime.error_message(issues)
 
         print view.file_name(), "was formatted"
 

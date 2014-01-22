@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 )
 
 func main() {
@@ -19,18 +20,16 @@ func main() {
 	if len(os.Args) > 2 {
 		paths = os.Args[2]
 	}
-	os.Stdout.WriteString("paths joined: " + paths + "\n")
-	os.Stdout.WriteString("filename: " + testFile + "\n")
 
 	d, err := parser.ParseFile(testFile, paths)
 	if err != nil {
-		fmt.Println("Parse error:", err)
+		os.Stderr.WriteString(fmt.Sprintf("%v", err))
 	} else {
 		fo, _ := os.Create(testFile)
 
 		formattedFile := d.Fmt(path.Base(testFile))
 
-		fo.WriteString(formattedFile)
+		fo.WriteString(strings.TrimSpace(formattedFile))
 		fo.Close()
 	}
 }

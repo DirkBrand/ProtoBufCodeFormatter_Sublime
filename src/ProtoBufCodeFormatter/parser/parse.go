@@ -29,7 +29,6 @@
 package parser
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 )
@@ -51,7 +50,6 @@ func ParseFile(filename string, paths ...string) (*descriptor.FileDescriptorSet,
 
 func parseFile(filename string, includeSourceInfo bool, includeImports bool, paths ...string) (*descriptor.FileDescriptorSet, error) {
 	args := []string{"--proto_path=" + strings.Join(paths, ":")}
-	fmt.Println(args)
 	if includeSourceInfo {
 		args = append(args, "--include_source_info")
 	}
