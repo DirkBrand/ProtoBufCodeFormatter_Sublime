@@ -2,26 +2,29 @@ package main
 
 import (
 	parser "ProtoBufCodeFormatter/parser"
+	"errors"
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
-	"strings"
 )
 
 func main() {
 
-	testFile := os.Args[1]
-	var paths []string
-	if len(os.Args) > 2 {
-		paths = filepath.SplitList(os.Args[2])
+	if len(os.Args) <= 1 {
+		fmt.Println(errors.New("Not enough argument!"))
+		os.Exit(1)
 	}
-	os.Stdout.WriteString("paths joined: " + strings.Join(paths, ":") + "\n")
+	testFile := os.Args[1]
+	var paths string
+	if len(os.Args) > 2 {
+		paths = os.Args[2]
+	}
+	os.Stdout.WriteString("paths joined: " + paths + "\n")
 	os.Stdout.WriteString("filename: " + testFile + "\n")
 
 	d, err := parser.ParseFile(testFile, paths)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Parse error:", err)
 	} else {
 		fo, _ := os.Create(testFile)
 

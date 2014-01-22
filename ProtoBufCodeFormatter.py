@@ -56,34 +56,32 @@ class AutoformatOnSave(sublime_plugin.EventListener):
         buildpath = os.path.join(
             plugPath, "ProtoBufCodeFormatter", "src", "ProtoBufCodeFormatter")
 
+
         # Check exe build
         if not os.path.isfile(processPath):
             sublime.status_message('Installing CodeFormatter dependencies...')
+            print "building binary"
             try:
-                os.makedirs(processPath)
+                os.makedirs(os.path.dirname(processPath))
             except:
                 pass
             gocmd = os.path.join(self.gobin, 'go')
 
             subprocess.call([gocmd, 'build', '-o', processPath],
-                            env={
-                            'GOPATH': str(os.path.join(plugPath, "ProtoBufCodeFormatter"))}
-                            cwd=buildpath,
-                            startupinfo=self.startupinfo)
+                env={'GOPATH': str(os.path.join(plugPath, "ProtoBufCodeFormatter"))},
+                cwd=buildpath)
 
         # Open subprocess
         fileDir = os.path.dirname(view.file_name())
         self.protopath = os.pathsep.join(
-            [self.protopath, fileDir, os.path.dirname(fileDir)])
+            ['./', fileDir + '/', self.protopath, os.path.dirname(fileDir) + '/'])
 
-        print self.protopath
-
-        self.p = subprocess.Popen(
-            [processPath, view.file_name(), self.protopath],
+        self.p = subprocess.Popen(processPath + ' ' + view.file_name() + ' ' + self.protopath,
             startupinfo=self.startupinfo,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            stdin=subprocess.PIPE)
+            stdin=subprocess.PIPE,
+            shell=True)
 
         issues = self.p.communicate()[0]
         log_file = open('error.log', 'a')

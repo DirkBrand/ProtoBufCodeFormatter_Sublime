@@ -1,6 +1,8 @@
 {
 	"enabled": true,
 
+	"GOPATH": ["/home/non-descript-intern/GoWorkspace","/home/non-descript-intern/.config/sublime-text-2/Packages/ProtoBufCodeFormatter/","/home/non-descript-intern/GoWorkspace/src/github.com/DirkBrand/ProtoBufCodeFormatter_Sublime"],
+
 	// Set the path to where the go binary is installed (Comma separated list of paths)
 	// All paths are checked, a Error will be displayed if the binary is not found
 	// e.g "GOBIN": ["/usr/go/bin/"]
@@ -8,5 +10,5 @@
 	"GOBIN": ["C:/GoWorkspace/bin", "~/bin", "~/GoWorkspace/bin", "/usr/local/go/bin", "/usr/local/opt/go/bin,", "/usr/local/bin", "/usr/bin"],
 
 	// Set path to where protocol buffer files may reside (Comma seperated list of paths)
-	"PROTOPATH": ["/home/dirk-mint/ProtocolBuffers", "/home/dirk-mint/GoWorkspace/src/github.com/DirkBrand/protobuf-code-formatter/protoc-gen-pretty/"]
+	"PROTOPATH": ["/home/non-descript-intern/GoWorkspace/src/github.com/DirkBrand/protobuf-code-formatter/protoc-gen-pretty/"]
 }

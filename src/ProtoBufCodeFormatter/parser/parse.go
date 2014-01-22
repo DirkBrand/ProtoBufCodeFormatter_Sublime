@@ -29,6 +29,7 @@
 package parser
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 )
@@ -44,12 +45,13 @@ func (this *errCmd) Error() string {
 	return this.err.Error() + ":" + string(this.output)
 }
 
-func ParseFile(filename string, paths []string) (*descriptor.FileDescriptorSet, error) {
-	return parseFile(filename, true, true, paths)
+func ParseFile(filename string, paths ...string) (*descriptor.FileDescriptorSet, error) {
+	return parseFile(filename, true, true, paths...)
 }
 
-func parseFile(filename string, includeSourceInfo bool, includeImports bool, paths []string) (*descriptor.FileDescriptorSet, error) {
+func parseFile(filename string, includeSourceInfo bool, includeImports bool, paths ...string) (*descriptor.FileDescriptorSet, error) {
 	args := []string{"--proto_path=" + strings.Join(paths, ":")}
+	fmt.Println(args)
 	if includeSourceInfo {
 		args = append(args, "--include_source_info")
 	}

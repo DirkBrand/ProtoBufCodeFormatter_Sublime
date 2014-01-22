@@ -41,6 +41,14 @@ const (
 	extendPath  = 7 // extensions
 	optionsPath = 8 // options
 
+	// tag numbers for options
+	javaPackagePath               = 1
+	JavaOuterClassnamePath        = 2
+	javaMultipleFilesPath         = 10
+	javaGenerateEqualsAndHashPath = 20
+	optimizeForPath               = 9
+	goPackagePath                 = 11
+
 	// tag numbers in DescriptorProto
 	messageFieldPath          = 2 // field
 	messageMessagePath        = 3 // nested_type
@@ -102,13 +110,19 @@ type ServiceDescriptor struct {
 	path string
 }
 
+type FileOptionsDescriptor struct {
+	common
+	*FileOptions
+}
+
 type FileDescriptor struct {
 	*FileDescriptorProto
-	desc []*Descriptor         // All the messages defined in this file.
-	enum []*EnumDescriptor     // All the enums defined in this file.
-	ext  []*FieldDescriptor    // All the top-level extensions defined in this file.
-	serv []*ServiceDescriptor  // All the top-level services defined in this file.
-	imp  []*ImportedDescriptor // All types defined in files publicly imported by this file.
+	desc []*Descriptor          // All the messages defined in this file.
+	enum []*EnumDescriptor      // All the enums defined in this file.
+	ext  []*FieldDescriptor     // All the top-level extensions defined in this file.
+	serv []*ServiceDescriptor   // All the top-level services defined in this file.
+	imp  []*ImportedDescriptor  // All types defined in files publicly imported by this file.
+	opt  *FileOptionsDescriptor // All options in the file.
 
 	// Comments, stored as a map of path (comma-separated integers) to the comment.
 	comments map[string]*SourceCodeInfo_Location
@@ -122,12 +136,14 @@ func WrapTypes(set *FileDescriptorSet) {
 		enums := wrapEnumDescriptors(f, descs)
 		exts := wrapExtensions(f)
 		serves := wrapServiceDescriptors(f)
+		options := wrapFileOptionsDescriptor(f)
 		fd := &FileDescriptor{
 			FileDescriptorProto: f,
 			desc:                descs,
 			enum:                enums,
 			ext:                 exts,
 			serv:                serves,
+			opt:                 options,
 		}
 		extractComments(fd)
 		allFiles[i] = fd
@@ -254,6 +270,15 @@ func wrapServiceDescriptors(file *FileDescriptorProto) []*ServiceDescriptor {
 	return sl
 }
 
+func wrapFileOptionsDescriptor(file *FileDescriptorProto) *FileOptionsDescriptor {
+	fod := &FileOptionsDescriptor{
+		common:      common{file},
+		FileOptions: file.GetOptions(),
+	}
+
+	return fod
+}
+
 func extractComments(file *FileDescriptor) {
 	file.comments = make(map[string]*SourceCodeInfo_Location)
 	for _, loc := range file.GetSourceCodeInfo().GetLocation() {
@@ -294,8 +319,10 @@ func extractComments(file *FileDescriptor) {
 func LeadingComments(path string, depth int) string {
 	if loc, ok := currentFile.comments[path]; ok && loc.LeadingComments != nil {
 		text := strings.TrimSuffix(loc.GetLeadingComments(), "\n")
+		//text = strings.TrimSpace(text)
 		var s []string
 		strCol := strings.Split(text, "\n")
+		s = append(s, "\n")
 		if len(strCol) == 1 {
 			// Single line comments
 			s = append(s, getIndentation(depth))
@@ -313,19 +340,13 @@ func LeadingComments(path string, depth int) string {
 					s = append(s, "\n")
 				}
 			} else {
-				s = append(s, getIndentation(depth))
-				s = append(s, "/* ")
-				s = append(s, strings.TrimSpace(strCol[0]))
-				s = append(s, "\n ")
-				for i := 1; i < len(strCol)-1; i += 1 {
+				for i := 0; i < len(strCol); i += 1 {
 					line := strCol[i]
-					s = append(s, getIndentation(depth+1))
-					s = append(s, strings.TrimSpace(line))
-					s = append(s, "\n ")
+					s = append(s, getIndentation(depth))
+					s = append(s, "//")
+					s = append(s, line)
+					s = append(s, "\n")
 				}
-				s = append(s, getIndentation(depth+1))
-				s = append(s, strings.TrimSpace(strCol[len(strCol)-1]))
-				s = append(s, " */\n")
 			}
 
 		}
@@ -347,19 +368,24 @@ func TrailingComments(path string, depth int) string {
 			s = append(s, strings.TrimSuffix(strings.TrimPrefix(strCol[0], " "), " "))
 			s = append(s, "\n")
 		} else {
-			s = append(s, getIndentation(depth))
-			s = append(s, "/* ")
-			s = append(s, strings.TrimSuffix(strings.TrimPrefix(strCol[0], " "), " "))
-			s = append(s, "\n ")
-			for i := 1; i < len(strCol)-1; i += 1 {
-				line := strCol[i]
-				s = append(s, getIndentation(depth+1))
-				s = append(s, strings.TrimSuffix(strings.TrimPrefix(line, " "), " "))
-				s = append(s, "\n ")
+			// Multi-line comments
+			if strings.Contains(text, "/*") || strings.Contains(text, "*/") {
+				// Block comments cannot nest
+				for _, line := range strCol {
+					s = append(s, getIndentation(depth))
+					s = append(s, "//")
+					s = append(s, line)
+					s = append(s, "\n")
+				}
+			} else {
+				for i := 0; i < len(strCol); i += 1 {
+					line := strCol[i]
+					s = append(s, getIndentation(depth))
+					s = append(s, "//")
+					s = append(s, line)
+					s = append(s, "\n")
+				}
 			}
-			s = append(s, getIndentation(depth+1))
-			s = append(s, strings.TrimSuffix(strings.TrimPrefix(strCol[len(strCol)-1], " "), " "))
-			s = append(s, " */\n")
 
 		}
 		return strings.Join(s, "")
