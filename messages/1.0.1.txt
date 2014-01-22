@@ -1,0 +1,5 @@
+Protocol Buffer Code Formatter v1.0.1 Changelog:
+
+--Added comment preservation
+
+--Added error popups if the protocol buffer is incorrect.
