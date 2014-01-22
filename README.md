@@ -1,17 +1,16 @@
 ProtoBufCodeFormatter_Sublime
 =============================
 
-Sublime plugin that allows auto-formatting of Protocol Buffer Code.
+Sublime-Text-2 plugin that allows auto-formatting of Protocol Buffer Code on save.
 
 Limitations
 ===========
-1. Formatter cannot preserve order of structures
+1. Formatter cannot preserve order of structures.  The order is pre-determined.
 
-2. For comments, outer `extend' groups are logically grouped together, so inner comments are lost
+2. For comments, outer `extend' groups are logically grouped together, so inner comments are lost.
 
-3. Style of comments are not preserved (/* */ vs. //), so single-line comments are shown with `//` and multi-line comments with `/* */`.
+3. Style of comments are not preserved (/* */ vs. //), so both single-line and multi-line comments are shown with `//`.
 
-4. Any comments not directly adjacent to a line of code, are not preserved.  Comments must be directly above or below a line of code (without newlines).
 
 
 Installation
