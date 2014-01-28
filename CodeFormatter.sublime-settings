@@ -1,7 +1,10 @@
 {
 	"enabled": true,
 
-	"GOPATH": ["/home/non-descript-intern/GoWorkspace","/home/non-descript-intern/.config/sublime-text-2/Packages/ProtoBufCodeFormatter/","/home/non-descript-intern/GoWorkspace/src/github.com/DirkBrand/ProtoBufCodeFormatter_Sublime"],
+	// Set the specific environment variables here (Comma separated list of paths)
+	// e.g GOPATH": ["/usr/go/gocode/src/example/", "/usr/tmp/gosrc/src/"]
+	// or GOPATH": ["C:/go/gocode/src/example/", "/usr/tmp/gosrc/src/"]
+	"GOPATH": ["/home/non-descript-intern/GoWorkspace/","/home/non-descript-intern/.config/sublime-text-2/Packages/ProtoBufCodeFormatter/"],
 
 	// Set the path to where the go binary is installed (Comma separated list of paths)
 	// All paths are checked, a Error will be displayed if the binary is not found
