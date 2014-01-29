@@ -16,10 +16,10 @@ Requirements
 ============
 
 - [Golang][go] v1.0 or higher
-- Correctly set `PROTOPATH` and `GOBIN` in the `Settings - User`.
+- Correctly set `PROTOPATH`, `GOROOT` and `GOBIN` in the `Settings - User`.
 
 
-Open `Settings - User` under `Preferences/Package Settings` and edit to contain the correct path information.  Add variable `GOBIN` and enter the location of your Go Binary.  Add variable `PROTOPATH` and enter any locations of Protocol Buffers that are imported by your protocol buffers.  Look at `Settings - Default` as an example.
+Open `Settings - User` under `Preferences/Package Settings` and edit to contain the correct path information.  Add variable `GOBIN` and enter the location of your Go Binary.  Add variable `PROTOPATH` and enter any locations of Protocol Buffers that are imported by your protocol buffers.  Optionally add a `GOROOT` variable to show the location of your Go workspace.  Look at `Settings - Default` as an example.
 
 [go]: http://golang.org/
 
