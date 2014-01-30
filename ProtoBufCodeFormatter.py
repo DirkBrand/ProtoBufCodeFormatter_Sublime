@@ -85,11 +85,9 @@ class AutoformatOnSave(sublime_plugin.EventListener):
             shell=True)
 
         issues = self.p.communicate()[0]
-        log_file = open('error.log', 'a')
-        log_file.write("\n")
-        log_file.write(issues)
-        log_file.write("\n")
-        log_file.close()
+        if len(issues) > 1:
+            print issues
+        
 
         # Create popup
         if len(issues) > 1:

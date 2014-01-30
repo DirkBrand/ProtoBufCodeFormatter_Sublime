@@ -10,9 +10,8 @@
 	// All paths are checked, a Error will be displayed if the binary is not found
 	// e.g "GOBIN": ["/usr/go/bin/"]
 	// or "GOBIN": ["C:/Go/bin/"]
-	"GOBIN": [],
+	"GOBIN": ["/usr/local/go/bin", "/usr/local/opt/go/bin,", "/usr/local/bin", "/usr/bin"],
 
-	// Set path to where protocol buffer files may reside for dependecies
-	// (Comma seperated list of paths)
+	// Set path to where protocol buffer files may reside (Comma seperated list of paths)
 	"PROTOPATH": []
 }
