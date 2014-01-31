@@ -102,7 +102,7 @@ class AutoformatOnSave(sublime_plugin.EventListener):
         vars = [
             'GOPATH',
             'GOROOT',
-            'PROTOBIN',
+            'PATH',
         ]
 
         cmdl = []
@@ -153,9 +153,9 @@ class AutoformatOnSave(sublime_plugin.EventListener):
         else:
             print "CodeFormatter: PROTOPATH could not be set!"
 
-        if s.get('PROTOBIN'):
-            _env['PROTOBIN'] = os.pathsep.join(s.get('PROTOBIN'))
+        if s.get('PATH'):
+            _env['PATH'] = os.pathsep.join(s.get('PATH'))
         else:
-            print "PROTOBIN could not be set"
+            print "PATH could not be set"
 
         self._env = _env
