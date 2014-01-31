@@ -77,7 +77,7 @@ class AutoformatOnSave(sublime_plugin.EventListener):
         self.protopath = os.pathsep.join(
             ['./', fileDir + '/', self.protopath, os.path.dirname(fileDir) + '/'])
 
-        self.p = subprocess.Popen(processPath + ' ' + view.file_name() + ' ' + self.protopath,
+        self.p = subprocess.Popen('"' + processPath + '" ' + view.file_name() + ' ' + self.protopath,
             startupinfo=self.startupinfo,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -102,6 +102,7 @@ class AutoformatOnSave(sublime_plugin.EventListener):
         vars = [
             'GOPATH',
             'GOROOT',
+            'PROTOBIN',
         ]
 
         cmdl = []
@@ -151,5 +152,10 @@ class AutoformatOnSave(sublime_plugin.EventListener):
             _env['PROTOPATH'] = os.pathsep.join(s.get('PROTOPATH'))
         else:
             print "CodeFormatter: PROTOPATH could not be set!"
+
+        if s.get('PROTOBIN'):
+            _env['PROTOBIN'] = os.pathsep.join(s.get('PROTOBIN'))
+        else:
+            print "PROTOBIN could not be set"
 
         self._env = _env
